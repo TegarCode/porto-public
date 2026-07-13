@@ -1,0 +1,86 @@
+services:
+  - type: web
+    name: porto-api
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    dockerfilePath: ./Porto/backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/v1/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_NAME
+        value: Portfolio API Gateway
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://porto-api.onrender.com
+      - key: APP_KEY
+        sync: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: CACHE_STORE
+        value: file
+      - key: SESSION_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: mysql-2aa035c8-oktaviantotegar2-9017.i.aivencloud.com
+      - key: DB_PORT
+        value: "15907"
+      - key: DB_DATABASE
+        value: defaultdb
+      - key: DB_USERNAME
+        value: avnadmin
+      - key: DB_PASSWORD
+        sync: false
+      - key: MYSQL_ATTR_SSL_CA
+        value: /etc/ssl/certs/ca-certificates.crt
+      - key: MYSQL_ATTR_SSL_VERIFY_SERVER_CERT
+        value: "false"
+      - key: SIDE_DB_HOST
+        value: mysql-2aa035c8-oktaviantotegar2-9017.i.aivencloud.com
+      - key: SIDE_DB_PORT
+        value: "15907"
+      - key: SIDE_DB_DATABASE
+        value: defaultdb
+      - key: SIDE_DB_USERNAME
+        value: avnadmin
+      - key: SIDE_DB_PASSWORD
+        sync: false
+      - key: PORTFOLIO_ALLOWED_ORIGINS
+        value: "*"
+      - key: PORTFOLIO_ALLOWED_METHODS
+        value: GET,POST,OPTIONS
+      - key: PORTFOLIO_ALLOWED_HEADERS
+        value: Content-Type,Accept,Authorization,X-Requested-With,X-API-KEY
+      - key: PORTFOLIO_RATE_LIMIT_PER_MINUTE
+        value: "60"
+      - key: PORTFOLIO_SIDE_CACHE_TTL
+        value: "300"
+      - key: SENTIMENT_PYTHON_ADAPTER_ENABLED
+        value: "true"
+      - key: SENTIMENT_FALLBACK_TO_FLASK
+        value: "false"
+      - key: BENCHMARK_SENTIMENT_PATH
+        value: /app/BenchmarkSentimen
+      - key: SENTIMENT_PYTHON_BIN
+        value: /opt/venv/bin/python
+      - key: SENTIMENT_PYTHON_TIMEOUT
+        value: "120"
+      - key: SENTIMENT_ENABLE_OCR
+        value: "false"
+      - key: DASHBOARD_SCRAPER_PATH
+        value: /app/DashboardScraper
+      - key: BPS_HS_FILE
+        value: /app/DashboardScraper/resources/bps/hscode_clean_BPS.xlsx
+      - key: SCRAPING_SERVICE_URL
+        value: http://127.0.0.1:5000
+      - key: SCRAPING_SERVICE_TIMEOUT
+        value: "30"

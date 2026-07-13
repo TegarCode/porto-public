@@ -1,7 +1,31 @@
 <?php
 
 use Illuminate\Support\Str;
-use Pdo\Mysql;
+
+$mysqlSslOptions = static function (): array {
+    if (! extension_loaded('pdo_mysql')) {
+        return [];
+    }
+
+    $caPath = env('MYSQL_ATTR_SSL_CA');
+
+    if ($caPath === null || $caPath === '') {
+        return [];
+    }
+
+    $options = [
+        PDO::MYSQL_ATTR_SSL_CA => $caPath,
+    ];
+
+    if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
+        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = filter_var(
+            env('MYSQL_ATTR_SSL_VERIFY_SERVER_CERT', false),
+            FILTER_VALIDATE_BOOLEAN,
+        );
+    }
+
+    return $options;
+};
 
 return [
 
@@ -59,9 +83,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions(),
         ],
 
         'side_portfolio' => [
@@ -78,9 +100,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions(),
         ],
 
         'mariadb' => [
@@ -98,9 +118,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => $mysqlSslOptions(),
         ],
 
         'pgsql' => [

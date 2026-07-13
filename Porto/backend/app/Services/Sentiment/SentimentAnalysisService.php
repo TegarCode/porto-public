@@ -78,20 +78,28 @@ class SentimentAnalysisService
             $command[] = $file->getClientOriginalName();
         }
 
-        $userProfile = getenv('USERPROFILE') ?: 'C:\\Users\\Tegar Oktavianto';
-        $appData = getenv('APPDATA') ?: $userProfile.'\\AppData\\Roaming';
+        $home = getenv('HOME') ?: sys_get_temp_dir();
+        $userProfile = getenv('USERPROFILE') ?: $home;
+        $appData = getenv('APPDATA') ?: getenv('XDG_DATA_HOME') ?: $home.'/.local/share';
+        $nltkData = getenv('NLTK_DATA') ?: $appData.'/nltk_data';
 
-        $process = new Process($command, base_path(), [
+        $processEnv = [
             'PYTHONHOME' => false,
             'PYTHONPATH' => false,
             'PYTHONIOENCODING' => 'utf-8',
             'PYTHONWARNINGS' => 'ignore',
-            'SYSTEMROOT' => getenv('SYSTEMROOT') ?: getenv('SystemRoot') ?: 'C:\\Windows',
             'USERPROFILE' => $userProfile,
             'HOME' => $userProfile,
             'APPDATA' => $appData,
-            'NLTK_DATA' => $appData.'\\nltk_data',
-        ]);
+            'XDG_DATA_HOME' => $appData,
+            'NLTK_DATA' => $nltkData,
+        ];
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $processEnv['SYSTEMROOT'] = getenv('SYSTEMROOT') ?: getenv('SystemRoot') ?: 'C:\\Windows';
+        }
+
+        $process = new Process($command, base_path(), $processEnv);
         $process->setTimeout((int) config('portfolio.services.sentiment.python_adapter.timeout', 120));
         $process->run();
 
