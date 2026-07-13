@@ -1,0 +1,59 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# JavaScript / Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+next-env.d.ts
+*.tsbuildinfo
+
+# PHP / Laravel
+vendor/
+.phpunit.result.cache
+.phpunit.cache/
+*.sqlite
+*.sqlite3
+Porto/backend/storage/logs/
+Porto/backend/storage/framework/cache/data/*
+Porto/backend/storage/framework/views/*
+Porto/backend/storage/framework/sessions/*
+Porto/backend/storage/framework/testing/*
+!Porto/backend/storage/**/.gitignore
+Porto/backend/bootstrap/cache/*.php
+!Porto/backend/bootstrap/cache/.gitignore
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# Runtime artifacts and user uploads
+runtime/
+DashboardScraper/runtime/
+DashboardScraper/resources/ml/model_rf_gravity.pkl
+BenchmarkSentimen/static/uploads/
+BenchmarkSentimen/hasil/
+database/*.local.sql
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.cursor/
+.zed/

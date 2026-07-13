@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if page_alert %}
+<section class="callout {{ page_alert.tone or 'info' }}">
+    <div>
+        <span class="eyebrow">{{ page_alert.eyebrow or "Informasi" }}</span>
+        <h2>{{ page_alert.title }}</h2>
+        <p>{{ page_alert.message }}</p>
+    </div>
+</section>
+{% endif %}
+
+<section class="hero-panel">
+    <div class="hero-copy">
+        <span class="eyebrow">{{ current_workspace.nav_title }} Workspace</span>
+        <h1>{{ hero_title }}</h1>
+        <p>{{ hero_copy }}</p>
+    </div>
+    <div class="hero-note">
+        <span class="status-pill info">{{ hero_badge }}</span>
+        <p>{{ hero_note }}</p>
+    </div>
+</section>
+
+<section class="stats-grid">
+    {% for stat in stats %}
+    <article class="stat-card">
+        <p class="stat-label">{{ stat.label }}</p>
+        <strong class="stat-value">{{ stat.value }}</strong>
+        <p class="stat-caption">{{ stat.caption }}</p>
+    </article>
+    {% endfor %}
+</section>
+
+<section class="insight-grid">
+    {% for note in architecture_notes %}
+    <article class="insight-card">
+        <h2>{{ note.title }}</h2>
+        <p>{{ note.text }}</p>
+    </article>
+    {% endfor %}
+</section>
+
+<section class="callout info compact-callout">
+    <div>
+        <span class="eyebrow">Cakupan Model</span>
+        <h2>Model ini fokus ke prediksi ekspor</h2>
+        <p>{{ manual_dataset_note }}</p>
+    </div>
+    <div class="chip-list">
+        <span class="soft-chip">Model: {{ "Ready" if ml_asset_status.ready else "Belum Lengkap" }}</span>
+        <span class="soft-chip">Model File: {{ "Ada" if ml_asset_status.model_ready else "Belum Ada" }}</span>
+        <span class="soft-chip">Encoder: {{ "Ada" if ml_asset_status.encoder_ready else "Belum Ada" }}</span>
+        <span class="soft-chip">Macro Reference Lokal: {{ "Ada" if ml_asset_status.macro_reference_ready else "Belum Ada" }}</span>
+    </div>
+</section>
+
+{% if not ml_asset_status.ready %}
+<section class="callout warning compact-callout">
+    <div>
+        <span class="eyebrow">Aset Model</span>
+        <h2>File model belum lengkap</h2>
+        <p>Workspace ML belum bisa dijalankan penuh sebelum `model_rf_gravity.pkl` dan `encoder_rf_gravity.pkl` tersedia di folder resources project.</p>
+    </div>
+</section>
+{% endif %}
+
+<section class="tool-section">
+    <div class="section-header">
+        <div>
+            <span class="eyebrow">Arah Fitur</span>
+            <h2>Workspace Ini Sekarang Fokus ke Upload Manual</h2>
+        </div>
+        <p>Supaya tidak bergantung pada tabel `tbgdp` dan `tbgdpgrowth`, alur prediksi diarahkan ke dataset manual penuh yang sudah membawa fitur GDP dan Growth di file upload.</p>
+    </div>
+
+    <section class="callout warning compact-callout">
+        <div>
+            <span class="eyebrow">Mode Input</span>
+            <h2>Mode tbtrade tidak dipakai sebagai alur utama</h2>
+            <p>Kalau kamu ingin prediksi berjalan stabil di device lain, gunakan upload dataset manual penuh. Dengan begitu user tinggal mengikuti template tanpa menunggu tabel referensi makro ada di database.</p>
+        </div>
+    </section>
+</section>
+
+<section class="tool-section">
+    <div class="section-header">
+        <div>
+            <span class="eyebrow">Prediksi</span>
+            <h2>{{ section_heading }}</h2>
+        </div>
+        <p>{{ section_caption }}</p>
+    </div>
+
+    <div class="tool-grid">
+        <article class="tool-card">
+            <div class="tool-card-head">
+                <div>
+                    <span class="tool-subtitle">Mode Aktif</span>
+                    <h3>Prediksi dari Dataset Manual</h3>
+                </div>
+                <span class="status-pill {% if ml_asset_status.ready %}success{% else %}warning{% endif %}">{{ "Ready" if ml_asset_status.ready else "Perlu setup" }}</span>
+            </div>
+
+            <p class="tool-copy">Upload file CSV atau Excel dengan format penuh yang sudah membawa seluruh fitur model. Ini adalah jalur yang sekarang difokuskan agar user tinggal mengikuti struktur dataset yang sama.</p>
+
+            <div class="meta-strip">
+                <span class="soft-chip">CSV / XLS / XLSX</span>
+                <span class="soft-chip">Format Penuh</span>
+                <span class="soft-chip">8 Fitur Model</span>
+            </div>
+
+            <div class="tool-note">
+                <strong>Template Dataset</strong>
+                <p>Unduh template atau contoh dataset di bawah ini, lalu isi data sesuai nama kolom yang sama agar file bisa langsung diproses oleh model.</p>
+            </div>
+
+            <div class="button-row">
+                <a class="action-btn secondary link-btn" href="{{ url_for('static', filename='ml/manual_prediction_template_full.csv') }}">Template Siap Isi</a>
+                <a class="action-btn secondary link-btn" href="{{ url_for('static', filename='ml/manual_prediction_example.csv') }}">Contoh Dataset</a>
+            </div>
+
+            <form class="tool-form" action="{{ url_for('ml_predict_dataset') }}" method="post" enctype="multipart/form-data">
+                <label class="field">
+                    <span>Upload Dataset Manual</span>
+                    <input type="file" name="dataset_file" accept=".csv,.xls,.xlsx">
+                    <small>Gunakan format penuh: Reporter, Partner, HS4, Year, Reporter_GDP, Partner_GDP, Reporter_Growth, Partner_Growth. Kolom Status dan ExportValue boleh ikut kalau kamu punya.</small>
+                </label>
+
+                <button class="action-btn" type="submit">Prediksi dari Dataset</button>
+            </form>
+        </article>
+    </div>
+</section>
+
+<section class="detail-grid">
+    <article class="detail-card">
+        <div class="detail-card-head">
+            <h2>Format Dataset Manual yang Didukung</h2>
+            <span class="soft-chip">Wajib Ikuti Header</span>
+        </div>
+
+        <div class="command-box">
+            <span>Kolom Inti Wajib</span>
+            <code>Reporter, Partner, HS4, Year, Reporter_GDP, Partner_GDP, Reporter_Growth, Partner_Growth</code>
+        </div>
+
+        <ul class="flat-list">
+            <li><strong>Reporter</strong>: kode negara 3 huruf, contoh `IDN`.</li>
+            <li><strong>Partner</strong>: kode negara 3 huruf, contoh `JPN`.</li>
+            <li><strong>HS4</strong>: boleh `0101` atau `101`, sistem akan normalisasi ke format model.</li>
+            <li><strong>Year</strong>: tahun numerik, contoh `2024`.</li>
+            <li><strong>Reporter_GDP / Partner_GDP</strong>: isi nilai GDP numerik untuk reporter dan partner di tahun yang sama.</li>
+            <li><strong>Reporter_Growth / Partner_Growth</strong>: isi nilai growth numerik untuk reporter dan partner di tahun yang sama.</li>
+            <li><strong>Status / ExportValue</strong>: opsional. Kalau `Status` ada, baris non-Export akan diabaikan.</li>
+        </ul>
+    </article>
+
+    <article class="detail-card">
+        <div class="detail-card-head">
+            <h2>Contoh Dataset yang Bisa Diproses</h2>
+            <span class="soft-chip">Ikuti Pola Ini</span>
+        </div>
+
+        <div class="data-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Reporter</th>
+                        <th>Partner</th>
+                        <th>HS4</th>
+                        <th>Year</th>
+                        <th>Reporter_GDP</th>
+                        <th>Partner_GDP</th>
+                        <th>Reporter_Growth</th>
+                        <th>Partner_Growth</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>IDN</td>
+                        <td>JPN</td>
+                        <td>101</td>
+                        <td>2024</td>
+                        <td>1390000000000</td>
+                        <td>4210000000000</td>
+                        <td>5.05</td>
+                        <td>1.23</td>
+                        <td>Export</td>
+                    </tr>
+                    <tr>
+                        <td>IDN</td>
+                        <td>USA</td>
+                        <td>1001</td>
+                        <td>2024</td>
+                        <td>1390000000000</td>
+                        <td>27360000000000</td>
+                        <td>5.05</td>
+                        <td>2.80</td>
+                        <td>Export</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>
+
+<section class="callout info compact-callout">
+    <div>
+        <span class="eyebrow">Batasan Model</span>
+        <h2>Hal penting sebelum upload</h2>
+    </div>
+    <ul class="flat-list">
+        <li>Model ini diambil dari implementasi lama dan dilatih khusus untuk pola data Export, bukan Import.</li>
+        <li>Kalau nilai kategori seperti `Reporter`, `Partner`, atau `HS4` belum pernah muncul saat training, sistem tetap memprediksi tapi akan menandainya sebagai unknown.</li>
+        <li>Hasil preview di layar dibatasi, tapi file CSV penuh selalu bisa diunduh setelah prediksi selesai dibuat.</li>
+    </ul>
+</section>
+
+{% if prediction_result %}
+<section class="tool-section">
+    <div class="section-header">
+        <div>
+            <span class="eyebrow">Hasil Prediksi</span>
+            <h2>{{ prediction_result.title }}</h2>
+        </div>
+        <p>{{ prediction_result.subtitle }}</p>
+    </div>
+
+    <div class="button-row">
+        <a class="action-btn secondary link-btn" href="{{ url_for('ml_download_prediction', download_token=prediction_result.download_token) }}">Unduh CSV Hasil Lengkap</a>
+        <div class="status-pill success">{{ prediction_result.summary.candidate_rows }} row siap dipakai</div>
+    </div>
+
+    {% if prediction_result.warnings %}
+    <section class="callout warning compact-callout">
+        <div>
+            <span class="eyebrow">Catatan Prediksi</span>
+            <h2>Beberapa hal perlu diperhatikan</h2>
+        </div>
+        <ul class="flat-list">
+            {% for warning in prediction_result.warnings %}
+            <li>{{ warning }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
+    <article class="detail-card log-panel">
+        <div class="detail-card-head">
+            <h2>Preview Hasil</h2>
+            <span class="soft-chip">{{ prediction_result.summary.preview_rows }} row ditampilkan</span>
+        </div>
+
+        <div class="data-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        {% for column in prediction_result.preview_columns %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in prediction_result.preview_rows %}
+                    <tr>
+                        {% for column in prediction_result.preview_columns %}
+                        <td>
+                            {% set value = row.get(column) %}
+                            {% if value is number %}
+                                {{ "{:,.2f}".format(value) }}
+                            {% else %}
+                                {{ value }}
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Konfigurasi Database</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <div class="background-glow background-glow-left"></div>
+    <div class="background-glow background-glow-right"></div>
+
+    <div class="page-shell setup-shell">
+        <section class="setup-grid">
+            <article class="setup-panel hero-panel">
+                <div class="hero-copy">
+                    <span class="eyebrow">First Access</span>
+                    <h1>Konfigurasi Database Aplikasi</h1>
+                    <p>
+                        Sebelum masuk ke dashboard, aplikasi akan memakai satu konfigurasi database
+                        bersama untuk SSINAS, BPS, dan parser TradeMap.
+                    </p>
+                </div>
+                <div class="hero-note">
+                    <span class="status-pill info">Schema bootstrap</span>
+                    <p>
+                        Setelah koneksi berhasil, aplikasi akan menyesuaikan tabel dan data referensi
+                        berdasarkan file <code>flask.sql</code>. Parser folder TradeMap nanti akan
+                        memakai tabel <code>data_perdagangan_full_v3</code> dan <code>data_perdagangan</code>.
+                    </p>
+                </div>
+            </article>
+
+            <article class="setup-panel">
+                <div class="detail-card-head">
+                    <div>
+                        <span class="eyebrow">Database Login</span>
+                        <h2>Masukkan Konfigurasi MySQL</h2>
+                    </div>
+                    {% if status_snapshot.configured %}
+                    <span class="status-pill {% if status_snapshot.schema_ready %}success{% elif status_snapshot.database_exists %}warning{% else %}danger{% endif %}">
+                        {% if status_snapshot.schema_ready %}Siap{% elif status_snapshot.database_exists %}Perlu init{% else %}Belum valid{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+
+                {% if setup_error %}
+                <div class="callout warning compact-callout">
+                    <div>
+                        <span class="eyebrow">Setup Gagal</span>
+                        <h2>Konfigurasi belum bisa dipakai</h2>
+                        <p>{{ setup_error }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <form class="tool-form setup-form" action="{{ url_for('database_setup') }}" method="post">
+                    <div class="split-fields">
+                        <label class="field">
+                            <span>Host</span>
+                            <input type="text" name="host" value="{{ form_state.host }}" placeholder="localhost">
+                        </label>
+                        <label class="field">
+                            <span>Port</span>
+                            <input type="number" name="port" value="{{ form_state.port }}" min="1" placeholder="3306">
+                        </label>
+                    </div>
+
+                    <div class="split-fields">
+                        <label class="field">
+                            <span>User</span>
+                            <input type="text" name="user" value="{{ form_state.user }}" placeholder="root">
+                        </label>
+                        <label class="field">
+                            <span>Password</span>
+                            <input type="password" name="password" value="{{ form_state.password }}" placeholder="Kosongkan jika tidak ada password">
+                            <small>Kalau password MySQL kosong, biarkan apa adanya.</small>
+                        </label>
+                    </div>
+
+                    <label class="field">
+                        <span>Nama Database</span>
+                        <input type="text" name="database" value="{{ form_state.database }}" placeholder="flask">
+                        <small>Database ini akan dipakai bersama oleh SSINAS, BPS, dan TradeMap.</small>
+                    </label>
+
+                    <button class="action-btn" type="submit">Simpan dan Inisialisasi Schema</button>
+                </form>
+            </article>
+        </section>
+
+        <section class="detail-grid setup-detail-grid">
+            <article class="detail-card">
+                <div class="detail-card-head">
+                    <div>
+                        <span class="eyebrow">Status Koneksi</span>
+                        <h2>Snapshot Database</h2>
+                    </div>
+                </div>
+
+                <ul class="flat-list info-list">
+                    <li><strong>Host</strong>: {{ form_state.host }}:{{ form_state.port }}</li>
+                    <li><strong>User</strong>: {{ form_state.user }}</li>
+                    <li><strong>Database</strong>: {{ form_state.database }}</li>
+                    <li><strong>Status</strong>: {{ status_snapshot.message }}</li>
+                </ul>
+
+                {% if status_snapshot.missing_tables %}
+                <div class="tool-note">
+                    <strong>Tabel yang masih dicek atau belum ada</strong>
+                    <p>{{ status_snapshot.missing_tables|join(', ') }}</p>
+                </div>
+                {% endif %}
+            </article>
+
+            <article class="detail-card">
+                <div class="detail-card-head">
+                    <div>
+                        <span class="eyebrow">Target Schema</span>
+                        <h2>Isi flask.sql yang Akan Dipakai</h2>
+                    </div>
+                </div>
+
+                <div class="chip-list">
+                    <span class="soft-chip">perusahaan</span>
+                    <span class="soft-chip">tbtrade</span>
+                    <span class="soft-chip">tbnegara</span>
+                    <span class="soft-chip">ref_negara</span>
+                    <span class="soft-chip">tbsumber</span>
+                    <span class="soft-chip">data_perdagangan_full_v3</span>
+                    <span class="soft-chip">data_perdagangan</span>
+                </div>
+
+                {% if status_snapshot.table_counts %}
+                <div class="params-box">
+                    <span>Jumlah data saat ini</span>
+                    <ul class="flat-list">
+                        {% for table_name, table_count in status_snapshot.table_counts.items() %}
+                        <li><strong>{{ table_name }}</strong>: {{ table_count }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </article>
+        </section>
+    </div>
+</body>
+</html>

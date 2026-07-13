@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page_title or "Dashboard Scraping" }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <div class="background-glow background-glow-left"></div>
+    <div class="background-glow background-glow-right"></div>
+    <button
+        class="sidebar-overlay"
+        type="button"
+        aria-label="Tutup navigasi"
+        data-sidebar-close
+    ></button>
+
+    <div class="page-shell app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <a class="brand sidebar-brand" href="{{ url_for('index', section=current_section) }}">
+                    <span class="brand-mark">SC</span>
+                    <div class="brand-copy">
+                        <strong>Scraping Control</strong>
+                        <p>Workspace Dashboard</p>
+                    </div>
+                </a>
+                <button
+                    class="sidebar-toggle"
+                    type="button"
+                    aria-label="Buka atau tutup navigasi"
+                    aria-expanded="true"
+                    data-sidebar-toggle
+                >
+                    <span class="sidebar-toggle-icon sidebar-toggle-open" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M4 7h16M4 12h16M4 17h10"></path>
+                        </svg>
+                    </span>
+                    <span class="sidebar-toggle-icon sidebar-toggle-close" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M6 6l12 12M18 6L6 18"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+
+            <div class="sidebar-block">
+                <span class="eyebrow">Workspace</span>
+                <nav class="sidebar-nav">
+                    {% for item in nav_items %}
+                    <a class="nav-link {% if item.is_active %}active{% endif %}" href="{{ url_for('index', section=item.key) }}">
+                        <span class="nav-link-mark">{{ item.short }}</span>
+                        <div class="nav-link-copy">
+                            <strong>{{ item.title }}</strong>
+                            <p>{{ item.subtitle }}</p>
+                        </div>
+                        <span class="nav-link-badge">{{ item.count }}</span>
+                    </a>
+                    {% endfor %}
+                </nav>
+            </div>
+
+            <div class="sidebar-panel">
+                <span class="eyebrow">Current View</span>
+                <h2>{{ current_workspace.nav_title }}</h2>
+                <p>{{ current_workspace.sidebar_copy }}</p>
+            </div>
+        </aside>
+
+        <div class="main-shell">
+            <header class="topbar">
+                <div class="topbar-heading">
+                    <span class="eyebrow">Scraping Control</span>
+                    <h1 class="topbar-title">{{ current_workspace.nav_title }}</h1>
+                </div>
+                <div class="topbar-copy">
+                    <button
+                        class="topbar-nav-btn"
+                        type="button"
+                        aria-label="Buka navigasi"
+                        data-sidebar-toggle
+                    >
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M4 7h16M4 12h16M4 17h10"></path>
+                        </svg>
+                    </button>
+                    <span>{{ db_profile.label }}</span>
+                    <span>Dark mode</span>
+                    <span>Auto reload aktif</span>
+                    <a class="topbar-link" href="{{ url_for('database_setup') }}">Konfigurasi DB</a>
+                </div>
+            </header>
+
+            <main class="content-shell">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var body = document.body;
+            var toggleButtons = document.querySelectorAll("[data-sidebar-toggle]");
+            var closeButtons = document.querySelectorAll("[data-sidebar-close]");
+            var desktopQuery = window.matchMedia("(min-width: 1081px)");
+
+            function setExpandedState(isExpanded) {
+                toggleButtons.forEach(function (button) {
+                    button.setAttribute("aria-expanded", String(isExpanded));
+                });
+            }
+
+            function closeMobileSidebar() {
+                body.classList.remove("sidebar-open");
+                setExpandedState(false);
+            }
+
+            function openMobileSidebar() {
+                body.classList.add("sidebar-open");
+                setExpandedState(true);
+            }
+
+            function toggleDesktopSidebar() {
+                body.classList.toggle("sidebar-collapsed");
+                setExpandedState(!body.classList.contains("sidebar-collapsed"));
+            }
+
+            toggleButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    if (desktopQuery.matches) {
+                        toggleDesktopSidebar();
+                        return;
+                    }
+
+                    if (body.classList.contains("sidebar-open")) {
+                        closeMobileSidebar();
+                    } else {
+                        openMobileSidebar();
+                    }
+                });
+            });
+
+            closeButtons.forEach(function (button) {
+                button.addEventListener("click", closeMobileSidebar);
+            });
+
+            desktopQuery.addEventListener("change", function (event) {
+                if (event.matches) {
+                    body.classList.remove("sidebar-open");
+                    setExpandedState(!body.classList.contains("sidebar-collapsed"));
+                } else {
+                    body.classList.remove("sidebar-collapsed");
+                    setExpandedState(body.classList.contains("sidebar-open"));
+                }
+            });
+
+            setExpandedState(
+                desktopQuery.matches
+                    ? !body.classList.contains("sidebar-collapsed")
+                    : body.classList.contains("sidebar-open")
+            );
+
+            function resetToolForms() {
+                document.querySelectorAll(".tool-form").forEach(function (form) {
+                    form.dataset.submitting = "false";
+                    form.querySelectorAll("button[type='submit']").forEach(function (button) {
+                        if (button.dataset.originalLabel) {
+                            button.textContent = button.dataset.originalLabel;
+                        }
+                        button.disabled = false;
+                    });
+                });
+            }
+
+            document.addEventListener("submit", function (event) {
+                var form = event.target.closest(".tool-form");
+                if (!form) {
+                    return;
+                }
+
+                if (form.dataset.submitting === "true") {
+                    event.preventDefault();
+                    return;
+                }
+
+                form.dataset.submitting = "true";
+                form.querySelectorAll("button[type='submit']").forEach(function (button) {
+                    if (!button.dataset.originalLabel) {
+                        button.dataset.originalLabel = button.textContent;
+                    }
+                    button.disabled = true;
+                    button.textContent = "Menjalankan...";
+                });
+            });
+
+            resetToolForms();
+            window.addEventListener("pageshow", resetToolForms);
+            document.addEventListener("DOMContentLoaded", resetToolForms);
+        }());
+    </script>
+</body>
+</html>

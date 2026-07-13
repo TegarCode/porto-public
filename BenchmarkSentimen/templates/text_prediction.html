@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Text Prediction</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 200px;
+      background: #333;
+      color: white;
+      padding: 20px;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin: 15px 0;
+      font-size: 16px;
+    }
+
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    form {
+      background: #fff;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      margin-top: 5px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .result {
+      margin-top: 30px;
+      background: #eee;
+      padding: 20px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+    }
+
+    .result h2 {
+      margin-top: 0;
+    }
+
+    .error {
+      color: red;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 50px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Menu</h2>
+    <a href="/">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <a href="/text_prediction">Prediksi dari text</a>
+  </div>
+
+  <div class="main-content">
+    <h1>📝 Text Prediction</h1>
+
+    <form method="post">
+      <label for="comment">Masukkan komentar untuk diprediksi:</label>
+      <textarea id="comment" name="comment" placeholder="Tulis komentar smartphone...">{{ comment if comment }}</textarea>
+      <button type="submit">Prediksi</button>
+    </form>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    {% if predictions %}
+      <div class="result">
+        <h2>🔍 Hasil Prediksi</h2>
+        <p><strong>Komentar:</strong> {{ text }}</p>
+        <ul>
+          {% for aspect, senti in predictions %}
+            <li><strong>{{ aspect|capitalize }}:</strong> {{ senti }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if no_aspect %}
+      <div class="result">
+        <h2>🔍 Hasil Prediksi</h2>
+        <p><strong>Komentar:</strong> {{ text }}</p>
+        <p><em>Komentar ini tidak memiliki nilai positif maupun negatif dari aspek mana pun.</em></p>
+      </div>
+    {% endif %}
+
+  </div>
+</body>
+</html>

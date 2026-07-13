@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OCR Gambar dari URL</title>
+</head>
+<body>
+    <h2>Masukkan URL Gambar untuk OCR</h2>
+    <form method="POST">
+        <input type="text" name="image_url" placeholder="Masukkan link gambar" style="width: 400px;" required>
+        <button type="submit">Proses OCR</button>
+    </form>
+
+    {% if image_url %}
+        <h3>Preview Gambar:</h3>
+        <img src="{{ image_url }}" alt="Gambar" width="400"><br><br>
+        <h3>Hasil OCR:</h3>
+        <pre>{{ ocr_text }}</pre>
+    {% endif %}
+</body>
+</html>

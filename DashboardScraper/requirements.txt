@@ -1,0 +1,11 @@
+Flask>=3.1,<4
+mysql-connector-python>=9.5,<10
+pandas>=3.0,<4
+requests>=2.32,<3
+beautifulsoup4>=4.14,<5
+selenium>=4.41,<5
+joblib>=1.5,<2
+scikit-learn>=1.8,<2
+openpyxl>=3.1,<4
+lxml>=6,<7
+xlrd>=2.0,<3

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Benchmark Smartphone Berdasarkan Sentimen Publik</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 200px;
+      background: #333;
+      color: white;
+      padding: 20px;
+      height: 100vh;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin: 10px 0;
+    }
+
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    form {
+      background: #fff;
+      padding: 30px;
+      max-width: 500px;
+      margin: 0 auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input[type="file"] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .footer {
+      margin-top: 50px;
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>Menu</h2>
+    <a href="/">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <a href="/text_prediction">Prediksi dari text</a>
+  </div>
+
+  <div class="content">
+    <h1>📊 Benchmark Smartphone Berdasarkan Sentimen Publik</h1>
+
+    <form action="/process_csv" method="post" enctype="multipart/form-data">
+      <label for="file_csv1">Upload Dataset 1:</label>
+      <input type="file" name="file_csv1" id="file_csv1">
+
+      <label for="file_csv2">Upload Dataset 2:</label>
+      <input type="file" name="file_csv2" id="file_csv2">
+
+      <button type="submit">🚀 Proses Prediksi</button>
+    </form>
+
+    <div class="footer">
+      &copy; 2025 Skripsi Sentimen Smartphone | Powered by Flask + Tesseract + SVM
+    </div>
+  </div>
+
+</body>
+</html>

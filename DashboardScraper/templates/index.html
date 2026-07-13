@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if page_alert %}
+<section class="callout {{ page_alert.tone or 'warning' }}">
+    <div>
+        <span class="eyebrow">{{ page_alert.eyebrow or "Perhatian" }}</span>
+        <h2>{{ page_alert.title }}</h2>
+        <p>{{ page_alert.message }}</p>
+    </div>
+</section>
+{% endif %}
+
+<section class="hero-panel">
+    <div class="hero-copy">
+        <span class="eyebrow">{{ current_workspace.nav_title }} Workspace</span>
+        <h1>{{ hero_title }}</h1>
+        <p>{{ hero_copy }}</p>
+    </div>
+    <div class="hero-note">
+        <span class="status-pill info">{{ hero_badge }}</span>
+        <p>{{ hero_note }}</p>
+    </div>
+</section>
+
+<section class="stats-grid">
+    {% for stat in stats %}
+    <article class="stat-card">
+        <p class="stat-label">{{ stat.label }}</p>
+        <strong class="stat-value">{{ stat.value }}</strong>
+        <p class="stat-caption">{{ stat.caption }}</p>
+    </article>
+    {% endfor %}
+</section>
+
+<section class="insight-grid">
+    {% for note in architecture_notes %}
+    <article class="insight-card">
+        <h2>{{ note.title }}</h2>
+        <p>{{ note.text }}</p>
+    </article>
+    {% endfor %}
+</section>
+
+{% if missing_slots %}
+<section class="callout warning">
+    <div>
+        <span class="eyebrow">Slot Belum Ada</span>
+        <h2>Masih ada scraper BPS yang belum terdeteksi</h2>
+        <p>Dashboard mengharapkan rentang tahunan BPS yang aktif di runner. Saat ini yang belum ada adalah:</p>
+    </div>
+    <div class="chip-list">
+        {% for item in missing_slots %}
+        <span class="soft-chip">{{ item }}</span>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% for group in tool_groups %}
+<section class="tool-section">
+    <div class="section-header">
+        <div>
+            <span class="eyebrow">{{ current_workspace.nav_title }}</span>
+            <h2>{{ section_heading }}</h2>
+        </div>
+        <p>{{ section_caption }}</p>
+    </div>
+
+    <div class="tool-grid">
+        {% for tool in group.tools %}
+        <article class="tool-card">
+            <div class="tool-card-head">
+                <div>
+                    <span class="tool-subtitle">{{ tool.subtitle }}</span>
+                    <h3>{{ tool.title }}</h3>
+                </div>
+                <span class="status-pill {{ tool.status_tone }}">{{ tool.status_label }}</span>
+            </div>
+
+            <p class="tool-copy">{{ tool.description }}</p>
+
+            <div class="meta-strip">
+                <span class="soft-chip">{{ tool.category }}</span>
+                <span class="soft-chip">{{ "Dashboard Task" if tool.run_kind == "internal" else "Python Script" }}</span>
+            </div>
+
+            <div class="tool-note">
+                <strong>Catatan</strong>
+                <p>{{ tool.note }}</p>
+            </div>
+
+            <div class="command-box">
+                <span>Command / mode</span>
+                <code>{{ tool.command }}</code>
+            </div>
+
+            {% set form_values = {} %}
+            {% include "_tool_form.html" %}
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endfor %}
+
+<section class="tool-section">
+    <div class="section-header">
+        <div>
+            <span class="eyebrow">Recent Runs</span>
+            <h2>{{ jobs_heading }}</h2>
+        </div>
+        <p>{{ jobs_caption }}</p>
+    </div>
+
+    {% if jobs %}
+    <div class="job-list">
+        {% for job in jobs %}
+        <a class="job-item" href="{{ url_for('job_result', job_id=job.id) }}">
+            <div>
+                <span class="job-title">{{ job.tool_title }}</span>
+                <p>{{ job.created_at }}</p>
+            </div>
+            <div class="job-meta">
+                <span class="status-pill {{ job.status_tone }}">{{ job.status_label }}</span>
+                <span class="job-link">Buka log</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Belum ada job yang dijalankan</h3>
+        <p>Setelah tool pertama dijalankan, aktivitasnya akan muncul di area ini.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

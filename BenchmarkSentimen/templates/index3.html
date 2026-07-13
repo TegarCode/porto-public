@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediksi Sentimen Kamera</title>
+</head>
+<body>
+    <h1>Prediksi Sentimen Kamera</h1>
+    <form action="/predict" method="post">
+        <textarea name="input_text" rows="4" cols="50" placeholder="Masukkan kalimat..."></textarea><br><br>
+        <button type="submit">Prediksi</button>
+    </form>
+
+    {% if result is not none %}
+        <h2>Hasil Prediksi: {{ result }}</h2>
+        <p>Teks: {{ text }}</p>
+    {% endif %}
+</body>
+</html>

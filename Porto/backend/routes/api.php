@@ -1,0 +1,48 @@
+<?php
+
+use App\Http\Controllers\Api\V1\Analysis\RcaEpdController;
+use App\Http\Controllers\Api\V1\Analysis\RcaCmsaController;
+use App\Http\Controllers\Api\V1\Analysis\RscaTbiController;
+use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\Pentaho\AdventureWorksDashboardController;
+use App\Http\Controllers\Api\V1\Scraping\ScrapingDecisionController;
+use App\Http\Controllers\Api\V1\Scraping\ScrapingDatabaseStatusController;
+use App\Http\Controllers\Api\V1\Scraping\ScrapingOptionsController;
+use App\Http\Controllers\Api\V1\Scraping\ScrapingResultController;
+use App\Http\Controllers\Api\V1\Scraping\ScrapingStatusController;
+use App\Http\Controllers\Api\V1\Scraping\SetupScrapingDatabaseController;
+use App\Http\Controllers\Api\V1\Scraping\StartScrapingController;
+use App\Http\Controllers\Api\V1\Scraping\StopScrapingController;
+use App\Http\Controllers\Api\V1\Sentiment\AnalyzeSentimentController;
+use App\Http\Controllers\Api\V1\Side\CountryOptionController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('v1')->middleware('throttle:portfolio-api')->group(function (): void {
+    Route::get('health', HealthController::class)->name('api.v1.health');
+    Route::get('side/countries', CountryOptionController::class)->name('api.v1.side.countries');
+    Route::get('analysis/rca-cmsa', RcaCmsaController::class)->name('api.v1.analysis.rca-cmsa');
+    Route::get('analysis/rsca-tbi', RscaTbiController::class)->name('api.v1.analysis.rsca-tbi');
+    Route::get('analysis/rsca-tbi/data', [RscaTbiController::class, 'data'])->name('api.v1.analysis.rsca-tbi.data');
+    Route::get('analysis/rsca-tbi/calculation', [RscaTbiController::class, 'calculation'])->name('api.v1.analysis.rsca-tbi.calculation');
+    Route::get('analysis/rsca-tbi/comparison', [RscaTbiController::class, 'comparison'])->name('api.v1.analysis.rsca-tbi.comparison');
+    Route::get('analysis/rsca-tbi-kalkulasi', [RscaTbiController::class, 'calculation'])->name('api.v1.analysis.rsca-tbi-kalkulasi');
+    Route::get('analysis/rsca-tbi-comparison', [RscaTbiController::class, 'comparison'])->name('api.v1.analysis.rsca-tbi-comparison');
+    Route::get('analysis/rca-epd', RcaEpdController::class)->name('api.v1.analysis.rca-epd');
+    Route::get('analysis/rca-epd/data', [RcaEpdController::class, 'data'])->name('api.v1.analysis.rca-epd.data');
+    Route::get('analysis/rca-epd/calculation', [RcaEpdController::class, 'calculation'])->name('api.v1.analysis.rca-epd.calculation');
+    Route::get('analysis/rca-epd/comparison', [RcaEpdController::class, 'comparison'])->name('api.v1.analysis.rca-epd.comparison');
+    Route::get('analysis/rca-epd/xmodel-options', [RcaEpdController::class, 'xModelOptions'])->name('api.v1.analysis.rca-epd.xmodel-options');
+    Route::get('analysis/rca-epd-kalkulasi', [RcaEpdController::class, 'calculation'])->name('api.v1.analysis.rca-epd-kalkulasi');
+    Route::get('analysis/rca-epd-comparison', [RcaEpdController::class, 'comparison'])->name('api.v1.analysis.rca-epd-comparison');
+    Route::get('analysis/rca-epd-xmodel-options', [RcaEpdController::class, 'xModelOptions'])->name('api.v1.analysis.rca-epd-xmodel-options');
+    Route::get('pentaho/adventureworks', AdventureWorksDashboardController::class)->name('api.v1.pentaho.adventureworks');
+    Route::post('sentiment/analyze', AnalyzeSentimentController::class)->name('api.v1.sentiment.analyze');
+    Route::post('scraping/start', StartScrapingController::class)->name('api.v1.scraping.start');
+    Route::get('scraping/options', ScrapingOptionsController::class)->name('api.v1.scraping.options');
+    Route::get('scraping/database/status', ScrapingDatabaseStatusController::class)->name('api.v1.scraping.database.status');
+    Route::post('scraping/database/setup', SetupScrapingDatabaseController::class)->name('api.v1.scraping.database.setup');
+    Route::get('scraping/status', ScrapingStatusController::class)->name('api.v1.scraping.status');
+    Route::get('scraping/result', ScrapingResultController::class)->name('api.v1.scraping.result');
+    Route::post('scraping/stop', StopScrapingController::class)->name('api.v1.scraping.stop');
+    Route::post('scraping/decision', ScrapingDecisionController::class)->name('api.v1.scraping.decision');
+});

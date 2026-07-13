@@ -1,0 +1,55 @@
+<form class="tool-form" action="{{ url_for('run_tool', tool_key=tool.key) }}" method="post" enctype="multipart/form-data">
+    {% for field in tool.form_fields %}
+    {% set current_value = form_values.get(field.name, field.default) if form_values is defined and field.field_type not in ["file", "hidden"] else field.default %}
+    {% if field.field_type == "hidden" %}
+    <input type="hidden" name="{{ field.name }}" value="{{ field.default }}">
+    {% elif field.field_type == "file" %}
+    <label class="field">
+        <span>{{ field.label }}</span>
+        <input
+            type="file"
+            name="{{ field.name }}"
+            {% if field.accept %}accept="{{ field.accept }}"{% endif %}
+            {% if field.allow_multiple %}multiple{% endif %}
+            {% if field.directory %}webkitdirectory directory{% endif %}
+        >
+        {% if field.help_text %}
+        <small>{{ field.help_text }}</small>
+        {% endif %}
+    </label>
+    {% else %}
+    <label class="field">
+        <span>{{ field.label }}</span>
+        {% if field.field_type == "select" %}
+        <select name="{{ field.name }}">
+            {% for option_value, option_label in field.options %}
+            <option value="{{ option_value }}" {% if option_value|string == current_value|string %}selected{% endif %}>{{ option_label }}</option>
+            {% endfor %}
+        </select>
+        {% else %}
+        <input
+            type="{{ field.field_type }}"
+            name="{{ field.name }}"
+            value="{{ current_value }}"
+            {% if field.min_value %}min="{{ field.min_value }}"{% endif %}
+            {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
+        >
+        {% endif %}
+        {% if field.help_text %}
+        <small>{{ field.help_text }}</small>
+        {% endif %}
+    </label>
+    {% endif %}
+    {% endfor %}
+
+    {% if tool.run_kind == "script" and tool.ready %}
+    <div class="button-row">
+        <button class="action-btn" type="submit" name="launch_mode" value="background">Run di Dashboard</button>
+        <button class="action-btn secondary" type="submit" name="launch_mode" value="terminal">Buka Terminal</button>
+    </div>
+    {% elif tool.run_kind == "script" and not tool.ready %}
+    <button class="action-btn disabled" type="button" disabled>{{ tool.status_label }}</button>
+    {% else %}
+    <button class="action-btn" type="submit">Jalankan Scraper</button>
+    {% endif %}
+</form>

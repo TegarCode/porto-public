@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="detail-hero">
+    <div>
+        <a class="back-link" href="{{ url_for('index', section=current_section) }}">Kembali ke dashboard</a>
+        <span class="eyebrow">Job Detail</span>
+        <h1>{{ selected_job.tool_title }}</h1>
+        <p>{{ selected_job.tool_subtitle }}</p>
+    </div>
+    <div class="detail-actions">
+        <span class="status-pill {{ selected_job.status_tone }}">{{ selected_job.status_label }}</span>
+        {% if selected_job.can_stop %}
+        <form action="{{ url_for('stop_job_route', job_id=selected_job.id) }}" method="post">
+            <button class="action-btn danger" type="submit">Berhenti Paksa</button>
+        </form>
+        {% endif %}
+    </div>
+</section>
+
+{% if selected_job.awaiting_decision and selected_job.decision_context %}
+<section class="callout warning">
+    <div>
+        <span class="eyebrow">Duplicate Alert</span>
+        <h2>Duplicate entry terdeteksi di SSINAS</h2>
+        <p>
+            Halaman {{ selected_job.decision_context.page_number }} memproses
+            {{ selected_job.decision_context.processed_count }} row,
+            {{ selected_job.decision_context.inserted_count }} row baru masuk,
+            dan {{ selected_job.decision_context.ignored_count }} row diabaikan karena duplicate.
+        </p>
+    </div>
+    <div class="button-row">
+        <form action="{{ url_for('resolve_job_decision_route', job_id=selected_job.id) }}" method="post">
+            <input type="hidden" name="choice" value="continue">
+            <button class="action-btn" type="submit">Lanjutkan Scraping</button>
+        </form>
+        <form action="{{ url_for('resolve_job_decision_route', job_id=selected_job.id) }}" method="post">
+            <input type="hidden" name="choice" value="stop">
+            <button class="action-btn danger" type="submit">Hentikan Job</button>
+        </form>
+    </div>
+</section>
+{% endif %}
+
+<section class="stats-grid detail-stats">
+    <article class="stat-card">
+        <p class="stat-label">Job ID</p>
+        <strong class="stat-value stat-small">{{ selected_job.id }}</strong>
+        <p class="stat-caption">ID run untuk memudahkan pelacakan log.</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-label">Mode</p>
+        <strong class="stat-value stat-small">{{ selected_job.mode }}</strong>
+        <p class="stat-caption">Background job, dashboard task, atau terminal terpisah.</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-label">Mulai</p>
+        <strong class="stat-value stat-small">{{ selected_job.created_at }}</strong>
+        <p class="stat-caption">Waktu job diluncurkan dari dashboard.</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-label">Selesai</p>
+        <strong class="stat-value stat-small">{{ selected_job.finished_at or "Masih berjalan" }}</strong>
+        <p class="stat-caption">{{ selected_job.note }}</p>
+    </article>
+</section>
+
+{% if selected_tool %}
+<section class="tool-section">
+    <div class="section-header">
+        <div>
+            <span class="eyebrow">Run Baru</span>
+            <h2>Jalankan Task Baru Tanpa Refresh</h2>
+        </div>
+        <p>Form ini siap dipakai lagi langsung dari halaman hasil job, jadi kamu tidak perlu refresh manual untuk memulai run berikutnya.</p>
+    </div>
+
+    <div class="tool-grid">
+        <article class="tool-card">
+            <div class="tool-card-head">
+                <div>
+                    <span class="tool-subtitle">{{ selected_tool.subtitle }}</span>
+                    <h3>{{ selected_tool.title }}</h3>
+                </div>
+                <span class="status-pill {{ selected_tool.status_tone }}">{{ selected_tool.status_label }}</span>
+            </div>
+
+            <p class="tool-copy">{{ selected_tool.description }}</p>
+
+            <div class="meta-strip">
+                <span class="soft-chip">{{ selected_tool.category }}</span>
+                <span class="soft-chip">Run Ulang</span>
+            </div>
+
+            <div class="tool-note">
+                <strong>Catatan</strong>
+                <p>{{ selected_tool.note }}</p>
+            </div>
+
+            <div class="command-box">
+                <span>Command / mode</span>
+                <code>{{ selected_tool.command }}</code>
+            </div>
+
+            {% set tool = selected_tool %}
+            {% set form_values = selected_form_values or {} %}
+            {% include "_tool_form.html" %}
+        </article>
+    </div>
+</section>
+{% endif %}
+
+<section class="detail-grid">
+    <article class="detail-card">
+        <div class="detail-card-head">
+            <h2>Command / Execution</h2>
+            <span class="soft-chip">{{ selected_job.mode }}</span>
+        </div>
+        <div class="command-box">
+            <span>Perintah</span>
+            <code>{{ selected_job.command }}</code>
+        </div>
+        {% if selected_job.params %}
+        <div class="params-box">
+            <span>Parameter</span>
+            <ul class="flat-list">
+                {% for key, value in selected_job.params.items() %}
+                <li><strong>{{ key }}</strong>: {{ value }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </article>
+
+    <article class="detail-card">
+        <div class="detail-card-head">
+            <h2>{{ jobs_heading }}</h2>
+            <span class="soft-chip">{{ jobs|length }} item</span>
+        </div>
+        {% if jobs %}
+        <div class="stack-list">
+            {% for job in jobs %}
+            <a class="job-item compact" href="{{ url_for('job_result', job_id=job.id) }}">
+                <div>
+                    <span class="job-title">{{ job.tool_title }}</span>
+                    <p>{{ job.created_at }}</p>
+                </div>
+                <span class="status-pill {{ job.status_tone }}">{{ job.status_label }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="muted">Belum ada job lain yang terekam.</p>
+        {% endif %}
+    </article>
+</section>
+
+<section class="log-panel">
+    <div class="detail-card-head">
+        <h2>Log Output</h2>
+        <span class="soft-chip">{{ selected_job.logs|length }} baris</span>
+    </div>
+
+{% if selected_job.has_logs %}
+    <div class="log-console">
+        {% for line in selected_job.logs %}
+        <div class="log-line">{{ line }}</div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Belum ada log yang tertangkap</h3>
+        <p>Untuk mode terminal terpisah, output live dipantau langsung dari jendela PowerShell yang dibuka.</p>
+    </div>
+    {% endif %}
+</section>
+
+{% if selected_job.status in ["queued", "running", "stopping"] %}
+<script>
+    window.setTimeout(function () {
+        window.location.reload();
+    }, 4000);
+</script>
+{% endif %}
+{% endblock %}
