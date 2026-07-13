@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.7.4",
+      "memory": 1024,
+      "maxDuration": 30,
+      "excludeFiles": "{tests/**,database/factories/**,database/seeders/**,storage/logs/**,storage/framework/cache/data/**,storage/framework/sessions/**,storage/framework/views/**,node_modules/**,public/build/**}"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.php"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.php"
+    }
+  ]
+}

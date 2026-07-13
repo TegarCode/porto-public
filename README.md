@@ -20,7 +20,7 @@ render.yaml             Blueprint Render untuk Laravel API
 ```txt
 GitHub
 |-- Vercel  -> Porto/portfolio-frontend
-|-- Render  -> Porto/backend
+|-- Vercel  -> Porto/backend
 `-- Aiven   -> database/porto_side.sql
 ```
 
@@ -36,10 +36,20 @@ Data Aiven yang sudah di-import berada di database `defaultdb`.
 ## Vercel Env
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=https://your-render-backend.onrender.com/api/v1
+NEXT_PUBLIC_API_BASE_URL=https://your-backend-project.vercel.app/api/v1
 ```
 
-## Render
+## Backend Vercel
 
-Gunakan `render.yaml` di root repo sebagai Blueprint. Detail tambahan ada di
-`Porto/backend/README-render.md`.
+Deploy backend sebagai project Vercel terpisah dengan root directory:
+
+```txt
+Porto/backend
+```
+
+Detail env dan setting ada di `Porto/backend/README-vercel.md`.
+
+## Render Opsional
+
+`render.yaml` tetap tersedia sebagai opsi Docker/Render jika nanti ada kartu
+untuk verifikasi billing. Untuk jalur 100% tanpa kartu, gunakan Vercel backend.

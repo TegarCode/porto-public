@@ -291,6 +291,13 @@ class ScrapingGatewayService
 
     private function client(): PendingRequest
     {
+        if (
+            ! (bool) config('portfolio.services.scraping.enabled')
+            || blank(config('portfolio.services.scraping.base_url'))
+        ) {
+            throw new \RuntimeException('Scraping service is unavailable in this deployment.');
+        }
+
         return Http::baseUrl((string) config('portfolio.services.scraping.base_url'))
             ->acceptJson()
             ->timeout((int) config('portfolio.services.scraping.timeout'))

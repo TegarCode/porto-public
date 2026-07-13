@@ -19,6 +19,7 @@ return [
 
     'services' => [
         'sentiment' => [
+            'enabled' => filter_var(env('SENTIMENT_SERVICE_ENABLED', true), FILTER_VALIDATE_BOOLEAN),
             'base_url' => env('SENTIMENT_SERVICE_URL', 'http://127.0.0.1:5000'),
             'timeout' => (int) env('SENTIMENT_SERVICE_TIMEOUT', 15),
             'retry_times' => (int) env('SENTIMENT_SERVICE_RETRY_TIMES', 0),
@@ -40,6 +41,7 @@ return [
             ],
         ],
         'scraping' => [
+            'enabled' => filter_var(env('SCRAPING_SERVICE_ENABLED', true), FILTER_VALIDATE_BOOLEAN),
             'base_url' => env('SCRAPING_SERVICE_URL', 'http://127.0.0.1:5000'),
             'timeout' => (int) env('SCRAPING_SERVICE_TIMEOUT', 30),
             'retry_times' => (int) env('SCRAPING_SERVICE_RETRY_TIMES', 0),

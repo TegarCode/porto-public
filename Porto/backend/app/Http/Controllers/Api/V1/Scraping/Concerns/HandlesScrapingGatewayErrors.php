@@ -21,7 +21,7 @@ trait HandlesScrapingGatewayErrors
             statusCode: $statusCode,
             meta: [
                 'service_url' => config('portfolio.services.scraping.base_url'),
-                'hint' => 'Jalankan DashboardScraper dari C:\\laragon\\www\\DashboardScraper dengan command: py flask-scrapSSinas run',
+                'hint' => 'Deploy DashboardScraper as a separate worker/service, then set SCRAPING_SERVICE_URL.',
             ],
         );
     }

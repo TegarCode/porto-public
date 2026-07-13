@@ -122,6 +122,13 @@ class SentimentAnalysisService
      */
     private function sendToFlask(array $payload, array $files): Response
     {
+        if (
+            ! (bool) config('portfolio.services.sentiment.enabled')
+            || blank(config('portfolio.services.sentiment.base_url'))
+        ) {
+            throw new \RuntimeException('Sentiment service is unavailable in this deployment.');
+        }
+
         $request = Http::baseUrl((string) config('portfolio.services.sentiment.base_url'))
             ->acceptJson()
             ->timeout((int) config('portfolio.services.sentiment.timeout'));

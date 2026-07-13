@@ -23,12 +23,16 @@ class HealthService
                     'configured' => filled(config('database.connections.side_portfolio.database')),
                 ],
                 'sentiment' => [
+                    'enabled' => (bool) config('portfolio.services.sentiment.enabled'),
                     'base_url' => config('portfolio.services.sentiment.base_url'),
-                    'configured' => filled(config('portfolio.services.sentiment.base_url')),
+                    'configured' => (bool) config('portfolio.services.sentiment.enabled')
+                        && filled(config('portfolio.services.sentiment.base_url')),
                 ],
                 'scraping' => [
+                    'enabled' => (bool) config('portfolio.services.scraping.enabled'),
                     'base_url' => config('portfolio.services.scraping.base_url'),
-                    'configured' => filled(config('portfolio.services.scraping.base_url')),
+                    'configured' => (bool) config('portfolio.services.scraping.enabled')
+                        && filled(config('portfolio.services.scraping.base_url')),
                 ],
             ],
         ];
