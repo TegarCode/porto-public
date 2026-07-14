@@ -8,6 +8,22 @@ define('LARAVEL_START', microtime(true));
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['PHP_SELF'] = '/index.php';
 
+$cachePathDefaults = [
+    'APP_CONFIG_CACHE' => '/tmp/config.php',
+    'APP_EVENTS_CACHE' => '/tmp/events.php',
+    'APP_PACKAGES_CACHE' => '/tmp/packages.php',
+    'APP_ROUTES_CACHE' => '/tmp/routes.php',
+    'APP_SERVICES_CACHE' => '/tmp/services.php',
+    'VIEW_COMPILED_PATH' => '/tmp/views',
+];
+
+foreach ($cachePathDefaults as $key => $path) {
+    if (empty($_ENV[$key]) && empty($_SERVER[$key])) {
+        $_ENV[$key] = $path;
+        $_SERVER[$key] = $path;
+    }
+}
+
 $storagePath = $_ENV['LARAVEL_STORAGE_PATH']
     ?? $_SERVER['LARAVEL_STORAGE_PATH']
     ?? '/tmp/laravel-storage';
@@ -22,6 +38,7 @@ foreach ([
     $storagePath.'/framework/sessions',
     $storagePath.'/framework/views',
     $storagePath.'/logs',
+    $_ENV['VIEW_COMPILED_PATH'] ?? '/tmp/views',
 ] as $path) {
     if (! is_dir($path)) {
         mkdir($path, 0775, true);

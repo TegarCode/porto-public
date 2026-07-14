@@ -30,6 +30,12 @@ CACHE_STORE=array
 SESSION_DRIVER=array
 QUEUE_CONNECTION=sync
 LARAVEL_STORAGE_PATH=/tmp/laravel-storage
+APP_CONFIG_CACHE=/tmp/config.php
+APP_EVENTS_CACHE=/tmp/events.php
+APP_PACKAGES_CACHE=/tmp/packages.php
+APP_ROUTES_CACHE=/tmp/routes.php
+APP_SERVICES_CACHE=/tmp/services.php
+VIEW_COMPILED_PATH=/tmp/views
 
 DB_CONNECTION=mysql
 DB_HOST=mysql-2aa035c8-oktaviantotegar2-9017.i.aivencloud.com
