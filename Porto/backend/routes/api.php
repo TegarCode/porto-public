@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Analysis\RcaEpdController;
 use App\Http\Controllers\Api\V1\Analysis\RcaCmsaController;
 use App\Http\Controllers\Api\V1\Analysis\RscaTbiController;
+use App\Http\Controllers\Api\V1\DatabaseHealthController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\Pentaho\AdventureWorksDashboardController;
 use App\Http\Controllers\Api\V1\Scraping\ScrapingDecisionController;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->middleware('throttle:portfolio-api')->group(function (): void {
     Route::get('health', HealthController::class)->name('api.v1.health');
+    Route::get('health/database', DatabaseHealthController::class)->name('api.v1.health.database');
     Route::get('side/countries', CountryOptionController::class)->name('api.v1.side.countries');
     Route::get('analysis/rca-cmsa', RcaCmsaController::class)->name('api.v1.analysis.rca-cmsa');
     Route::get('analysis/rsca-tbi', RscaTbiController::class)->name('api.v1.analysis.rsca-tbi');
