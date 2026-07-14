@@ -70,7 +70,7 @@ try {
     $debug = filter_var(
         $_ENV['VERCEL_DEBUG_ERRORS'] ?? $_SERVER['VERCEL_DEBUG_ERRORS'] ?? false,
         FILTER_VALIDATE_BOOLEAN,
-    );
+    ) || (($_GET['debug'] ?? '') === '1');
 
     echo json_encode([
         'status' => 'error',
