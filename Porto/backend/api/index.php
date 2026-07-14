@@ -36,6 +36,7 @@ if ($requestUri === '/api/_boot-check') {
     echo json_encode([
         'status' => 'success',
         'data' => [
+            'build_marker' => 'vercel-api-path-view-provider-20260714',
             'php_version' => PHP_VERSION,
             'cwd' => getcwd(),
             'base_dir' => dirname(__DIR__),
