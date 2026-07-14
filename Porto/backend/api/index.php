@@ -82,6 +82,8 @@ try {
         'meta' => [
             'exception' => $debug ? get_class($exception) : 'BootstrapException',
             'message' => $debug ? $exception->getMessage() : 'Backend boot failed.',
+            'file' => $debug ? $exception->getFile().':'.$exception->getLine() : null,
+            'trace' => $debug ? array_slice($exception->getTrace(), 0, 8) : null,
         ],
         'message' => 'Portfolio backend failed to boot.',
     ]);
