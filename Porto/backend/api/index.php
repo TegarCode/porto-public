@@ -45,36 +45,6 @@ foreach ([
     }
 }
 
-$requestUri = strtok((string) ($_SERVER['REQUEST_URI'] ?? ''), '?') ?: '/';
-
-if ($requestUri === '/api/_boot-check') {
-    header('Content-Type: application/json');
-
-    echo json_encode([
-        'status' => 'success',
-        'data' => [
-            'build_marker' => 'vercel-api-path-view-provider-20260714',
-            'php_version' => PHP_VERSION,
-            'cwd' => getcwd(),
-            'base_dir' => dirname(__DIR__),
-            'vendor_autoload_exists' => is_file(__DIR__.'/../vendor/autoload.php'),
-            'bootstrap_app_exists' => is_file(__DIR__.'/../bootstrap/app.php'),
-            'storage_path' => $storagePath,
-            'storage_writable' => is_writable($storagePath),
-            'extensions' => [
-                'pdo_mysql' => extension_loaded('pdo_mysql'),
-                'openssl' => extension_loaded('openssl'),
-                'mbstring' => extension_loaded('mbstring'),
-                'intl' => extension_loaded('intl'),
-            ],
-        ],
-        'meta' => [],
-        'message' => 'Vercel PHP boot check.',
-    ]);
-
-    return;
-}
-
 try {
     require __DIR__.'/../vendor/autoload.php';
 
@@ -91,7 +61,7 @@ try {
     $debug = filter_var(
         $_ENV['VERCEL_DEBUG_ERRORS'] ?? $_SERVER['VERCEL_DEBUG_ERRORS'] ?? false,
         FILTER_VALIDATE_BOOLEAN,
-    ) || (($_GET['debug'] ?? '') === '1');
+    );
 
     echo json_encode([
         'status' => 'error',
