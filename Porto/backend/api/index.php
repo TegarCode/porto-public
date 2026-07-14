@@ -5,6 +5,9 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['PHP_SELF'] = '/index.php';
+
 $storagePath = $_ENV['LARAVEL_STORAGE_PATH']
     ?? $_SERVER['LARAVEL_STORAGE_PATH']
     ?? '/tmp/laravel-storage';
