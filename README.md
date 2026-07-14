@@ -36,8 +36,10 @@ Data Aiven yang sudah di-import berada di database `defaultdb`.
 ## Vercel Env
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=https://your-backend-project.vercel.app/api/v1
+NEXT_PUBLIC_API_BASE_URL=https://porto-backend-pearl.vercel.app/api/v1
 ```
+
+Frontend deploy notes are in `Porto/portfolio-frontend/README-vercel.md`.
 
 ## Backend Vercel
 
