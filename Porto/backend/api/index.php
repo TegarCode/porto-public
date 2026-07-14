@@ -25,9 +25,31 @@ foreach ([
     }
 }
 
-require __DIR__.'/../vendor/autoload.php';
+try {
+    require __DIR__.'/../vendor/autoload.php';
 
-/** @var Application $app */
-$app = require_once __DIR__.'/../bootstrap/app.php';
+    /** @var Application $app */
+    $app = require_once __DIR__.'/../bootstrap/app.php';
 
-$app->handleRequest(Request::capture());
+    $app->handleRequest(Request::capture());
+} catch (Throwable $exception) {
+    error_log((string) $exception);
+
+    http_response_code(500);
+    header('Content-Type: application/json');
+
+    $debug = filter_var(
+        $_ENV['VERCEL_DEBUG_ERRORS'] ?? $_SERVER['VERCEL_DEBUG_ERRORS'] ?? false,
+        FILTER_VALIDATE_BOOLEAN,
+    );
+
+    echo json_encode([
+        'status' => 'error',
+        'data' => [],
+        'meta' => [
+            'exception' => $debug ? get_class($exception) : 'BootstrapException',
+            'message' => $debug ? $exception->getMessage() : 'Backend boot failed.',
+        ],
+        'message' => 'Portfolio backend failed to boot.',
+    ]);
+}
