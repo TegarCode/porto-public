@@ -10,14 +10,14 @@
       "excludeFiles": "{tests/**,database/factories/**,database/seeders/**,storage/logs/**,storage/framework/cache/data/**,storage/framework/sessions/**,storage/framework/views/**,node_modules/**,public/build/**}"
     }
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/index.php"
+      "src": "/api/(.*)",
+      "dest": "api/index.php"
     },
     {
-      "source": "/:path*",
-      "destination": "/api/index.php"
+      "src": "/(.*)",
+      "dest": "api/index.php"
     }
   ]
 }
