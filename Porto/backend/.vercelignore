@@ -4,6 +4,11 @@
 
 vendor
 node_modules
+package.json
+package-lock.json
+vite.config.js
+resources/css
+resources/js
 storage/logs/*
 storage/framework/cache/data/*
 storage/framework/sessions/*
