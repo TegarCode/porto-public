@@ -267,7 +267,7 @@ export function ScrapingControlView() {
           >
             Back to portfolio
           </Link>
-          <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-[0.86fr_1.14fr] md:items-end">
+          <div className="mt-10">
             <div>
               <p className="font-mono text-xs uppercase tracking-[0.24em] text-muted">
                 Scraping Dashboard
@@ -276,11 +276,6 @@ export function ScrapingControlView() {
                 Run the same scraper workflow.
               </h1>
             </div>
-            <p className="max-w-2xl text-lg leading-8 text-muted md:text-xl md:leading-9">
-              Kontrol ini mengikuti struktur DashboardScraper: BPS memakai
-              tahun, flow, dan checkpoint HS; SSINAS memakai token session
-              manual agar siap VPS; TradeMap memproses folder file Excel.
-            </p>
           </div>
         </header>
       </section>
